@@ -18,17 +18,11 @@ class User extends Authenticatable
         'status'
     ];
 
-
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Check if user is super admin
-     *
-     * @return bool
-     */
     public function isSuperAdmin(): bool
     {
         return $this->role === 'super_admin';
@@ -37,12 +31,6 @@ class User extends Authenticatable
     public function logs()
     {
         return $this->hasMany(Log::class);
-    }
-
-    public function faceData()
-    {
-        return $this->hasOne(FaceData::class);
-        
     }
 
     public function getAuthPassword()
@@ -54,5 +42,4 @@ class User extends Authenticatable
     {
         return $this->status === 'aktif';
     }
-
 }

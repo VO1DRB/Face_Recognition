@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\FaceData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -12,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('faceData')->get();
+        $users = User::all();
         return view('users.index', compact('users'));
     }
 
@@ -27,7 +26,6 @@ class UserController extends Controller
             'username' => 'required|unique:users',
             'role'     => 'required|string',
             'password' => 'required|min:6',
-            'encoding' => 'required', // hasil scan wajah
         ]);
 
         // Simpan user
@@ -38,13 +36,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Simpan face encoding
-        FaceData::create([
-            'user_id' => $user->id,
-            'encoding' => $request->encoding,
-        ]);
-
-        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan dengan data wajah.');
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
     }
 
     public function edit(User $user)
@@ -84,23 +76,6 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus');
     }
-
-    // Scan wajah lewat API device
-    public function scanFace(Request $request)
-    {
-        try {
-            $response = Http::post('http://192.168.1.100:5000/capture');
-
-            if ($response->successful()) {
-                return response()->json($response->json());
-            }
-
-            return response()->json(['success' => false, 'message' => 'Gagal komunikasi dengan device'], 500);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
-        }
-    }
-
     public function toggleStatus(User $user)
     {
         $user->update([

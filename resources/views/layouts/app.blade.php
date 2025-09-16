@@ -18,20 +18,65 @@
     <div class="min-h-screen flex bg-gray-100">
 
         <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-md hidden md:block">
-            <div class="p-4 text-xl font-bold border-b">
-                {{ config('app.name', 'Laravel') }}
+        <aside class="w-64 h-screen bg-gray-50 text-gray-800 flex flex-col hidden md:flex shadow-md">
+            <!-- Logo -->
+            <div class="p-4 border-b bg-white shadow-sm flex items-center justify-center">
+                <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="h-10">
             </div>
-            <nav class="mt-6 space-y-1">
-                <a href="{{ route('dashboard') }}" 
-                   class="block px-6 py-3 hover:bg-gray-200 {{ request()->routeIs('dashboard') ? 'bg-gray-200 font-semibold' : '' }}">
-                    🏠 Dashboard
+
+            <!-- Menu -->
+            <div class="flex-1 overflow-y-auto">
+                <ul class="p-4 space-y-2">
+                    <li>
+                        <a href="{{ route('dashboard') }}" 
+                        class="block px-4 py-2 rounded-md transition 
+                                hover:bg-gray-200 {{ request()->routeIs('dashboard') ? 'bg-gray-200 font-semibold' : '' }}">
+                            🏠 Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('users.index') }}" 
+                        class="block px-4 py-2 rounded-md transition 
+                                hover:bg-gray-200 {{ request()->routeIs('users.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                            👤 Kelola User
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('attendance.index') }}" 
+                        class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('attendance.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                            📊 Attendance
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('devices.index') }}" 
+                        class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('devices.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                            📡 Kelola Device
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Bagian bawah (User Info + Logout) -->
+            <div class="p-4 border-t border-gray-200 bg-white">
+                <a href="{{ route('profile.edit') }}" class="flex items-center mb-3 hover:bg-gray-100 p-2 rounded-md transition">
+                    <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center font-bold text-gray-700">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold">{{ Auth::user()->name }}</div>
+                        <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    </div>
                 </a>
-                <a href="{{ route('users.index') }}" 
-                   class="block px-6 py-3 hover:bg-gray-200 {{ request()->routeIs('users.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    👤 Kelola User
-                </a>
-            </nav>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" 
+                            class="w-full text-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
+                        Log Out
+                    </button>
+                </form>
+            </div>
+
         </aside>
 
         <!-- Page Content -->

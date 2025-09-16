@@ -4,8 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\LoginController;
-
-
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\DeviceController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +36,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('users.scan-face');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+});
 
+Route::middleware(['auth'])->group(function () {
+    Route::resource('devices', DeviceController::class);
+});
 
 require __DIR__.'/auth.php';

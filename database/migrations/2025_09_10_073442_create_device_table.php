@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
+            $table->string('device_code')->unique(); // kode unik device
             $table->string('nama_device');
             $table->string('lokasi');
             $table->string('ip_address')->nullable();
+            $table->string('status')->default('nonaktif');
+            $table->timestamp('last_seen')->nullable(); // terakhir online
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('device');
+        Schema::dropIfExists('devices');
     }
 };

@@ -24,5 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Device management
         Route::resource('devices', DeviceController::class);
+        Route::post('devices/{device}/heartbeat', [DeviceController::class, 'heartbeat']);
+        Route::get('devices', [DeviceController::class, 'index']); // cek daftar device
     });
 });
