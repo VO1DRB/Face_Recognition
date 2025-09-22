@@ -1,0 +1,61 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Exports API",
+    "version": "1.0.0",
+    "description": "API for exporting attendance data"
+  },
+  "servers": [
+    { "url": "http://localhost:8000" }
+  ],
+  "paths": {
+    "/api/exports/daily": {
+      "get": {
+        "summary": "Export daily attendance (CSV)",
+        "parameters": [
+          { "name": "date", "in": "query", "required": false, "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file download",
+            "content": {
+              "text/csv": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exports/history": {
+      "get": {
+        "summary": "Get export history",
+        "responses": {
+          "200": {
+            "description": "List of daily exports",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/DailyExport" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DailyExport": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "file_path": { "type": "string" },
+          "exported_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

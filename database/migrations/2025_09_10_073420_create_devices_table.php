@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->string('device_code')->unique(); // kode unik device
+            $table->string('device_code')->unique();
             $table->string('nama_device');
-            $table->string('lokasi');
-            $table->string('ip_address')->nullable();
-            $table->string('status')->default('nonaktif');
-            $table->timestamp('last_seen')->nullable(); // terakhir online
+            $table->string('lokasi')->index();
+            $table->string('ip_address')->nullable()->index();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->timestamp('last_seen')->nullable();
+            $table->json('meta')->nullable(); // info tambahan
             $table->timestamps();
         });
     }

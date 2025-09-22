@@ -10,8 +10,13 @@ class DeviceController extends Controller
 {
     public function index()
     {
-        $devices = Device::all();
+        $devices = Device::latest()->paginate(10);
         return view('devices.index', compact('devices'));
+    }
+
+    public function create()
+    {
+        return view('devices.create');
     }
 
     public function store(Request $request)
@@ -20,6 +25,7 @@ class DeviceController extends Controller
             'nama_device' => 'required|string|max:255',
             'lokasi'      => 'required|string|max:255',
             'ip_address'  => 'nullable|ip',
+            'meta'        => 'nullable|array',
         ]);
 
         $validated['device_code'] = 'DEV-' . strtoupper(Str::random(6));
@@ -32,7 +38,6 @@ class DeviceController extends Controller
             ->with('success', 'Device berhasil ditambahkan');
     }
 
-    /** ✅ Tambahkan method edit */
     public function edit(Device $device)
     {
         return view('devices.edit', compact('device'));
@@ -44,6 +49,8 @@ class DeviceController extends Controller
             'nama_device' => 'required|string|max:255',
             'lokasi'      => 'required|string|max:255',
             'ip_address'  => 'nullable|ip',
+            'status'      => 'required|in:aktif,nonaktif',
+            'meta'        => 'nullable|array',
         ]);
 
         $device->update($validated);
@@ -55,7 +62,25 @@ class DeviceController extends Controller
     public function destroy(Device $device)
     {
         $device->delete();
+
         return redirect()->route('devices.index')
             ->with('success', 'Device berhasil dihapus');
+    }
+
+    /**
+     * Tandai device sedang online (heartbeat dari IoT)
+     */
+    public function heartbeat(Device $device, Request $request)
+    {
+        $device->update([
+            'status'    => 'aktif',
+            'last_seen' => now(),
+            'ip_address'=> $request->ip(),
+        ]);
+
+        return response()->json([
+            'message' => 'Device heartbeat diterima',
+            'device'  => $device,
+        ], 200);
     }
 }

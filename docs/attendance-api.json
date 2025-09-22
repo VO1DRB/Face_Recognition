@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Attendance API",
+    "version": "1.0.0",
+    "description": "API for managing attendances and shifts"
+  },
+  "servers": [
+    { "url": "http://localhost:8000" }
+  ],
+  "paths": {
+    "/api/attendances": {
+      "get": {
+        "summary": "Get all attendances (today)",
+        "responses": {
+          "200": {
+            "description": "List of attendances",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Attendance" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Record attendance (check-in/out)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AttendanceCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Attendance recorded successfully" }
+        }
+      }
+    },
+    "/api/attendances/{id}": {
+      "get": {
+        "summary": "Get attendance by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance detail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Attendance" }
+              }
+            }
+          },
+          "404": { "description": "Attendance not found" }
+        }
+      }
+    },
+    "/api/shifts": {
+      "get": {
+        "summary": "Get all shifts",
+        "responses": {
+          "200": {
+            "description": "List of shifts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Shift" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new shift",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ShiftCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Shift created successfully" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Attendance": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "user_id": { "type": "integer" },
+          "device_id": { "type": "integer" },
+          "status": { "type": "string", "enum": ["hadir", "terlambat", "pulang"] },
+          "scanned_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "AttendanceCreate": {
+        "type": "object",
+        "required": ["user_id", "device_id"],
+        "properties": {
+          "user_id": { "type": "integer" },
+          "device_id": { "type": "integer" },
+          "scanned_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Shift": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "nama_shift": { "type": "string" },
+          "jam_masuk": { "type": "string", "format": "time" },
+          "jam_pulang": { "type": "string", "format": "time" }
+        }
+      },
+      "ShiftCreate": {
+        "type": "object",
+        "required": ["nama_shift", "jam_masuk", "jam_pulang"],
+        "properties": {
+          "nama_shift": { "type": "string" },
+          "jam_masuk": { "type": "string", "format": "time" },
+          "jam_pulang": { "type": "string", "format": "time" }
+        }
+      }
+    }
+  }
+}

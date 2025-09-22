@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,
+            DeviceSeeder::class,
+            ShiftSeeder::class,
+            AttendanceSeeder::class,
+            FaceSeeder::class,
+            DailyExportSeeder::class,
         ]);
     }
 }

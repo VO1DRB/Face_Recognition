@@ -10,19 +10,37 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'username' => 'superadmin',
-            'password' => Hash::make('password123'),
-            'role' => 'super_admin',
-            'status' => 'aktif',
-        ]);
+        // Super Admin default
+        User::updateOrCreate(
+            ['username' => 'superadmin'],
+            [
+                'nama_lengkap' => 'Super Administrator',
+                'password'     => 'password123',
+                'role'         => 'super_admin',
+                'status'       => 'aktif',
+            ]
+        );
 
         // Admin default
-        User::create([
-            'username' => 'admin',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'status' => 'aktif',
-        ]);
+        User::updateOrCreate(
+            ['username' => 'admin'],
+            [
+                'nama_lengkap' => 'Administrator',
+                'password'     => 'admin123',
+                'role'         => 'admin',
+                'status'       => 'aktif',
+            ]
+        );
+
+        // User biasa (opsional)
+        User::updateOrCreate(
+            ['username' => 'user1'],
+            [
+                'nama_lengkap' => 'User Satu',
+                'password'     => 'user123',
+                'role'         => 'user',
+                'status'       => 'aktif',
+            ]
+        );
     }
 }

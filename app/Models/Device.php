@@ -12,15 +12,17 @@ class Device extends Model
         'lokasi',
         'ip_address',
         'status',
-        'last_seen'
+        'last_seen',
+        'meta',
     ];
 
     protected $casts = [
         'last_seen' => 'datetime',
+        'meta'      => 'array',
     ];
 
-    public function logs()
+    public function attendances()
     {
-        return $this->hasMany(Log::class);
+        return $this->hasMany(Attendance::class);
     }
 }

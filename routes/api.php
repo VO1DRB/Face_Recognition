@@ -1,30 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AttendanceController;
-// use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DeviceController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;   // 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\FaceController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\DailyExportController;
 
+Route::apiResource('users', UserController::class);
+Route::apiResource('devices', DeviceController::class);
+Route::apiResource('faces', FaceController::class);
+Route::apiResource('attendances', AttendanceController::class);
+Route::apiResource('shifts', ShiftController::class);
+Route::apiResource('daily-exports', DailyExportController::class);
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
-    // Attendance routes
-    Route::get('attendance/history', [AttendanceController::class, 'history']);
-    Route::post('attendance/record', [AttendanceController::class, 'recordAttendance']);
-    
-    // Super Admin only routes
-    Route::middleware('super.admin')->group(function () {
-        // User management
-        Route::resource('users', UserController::class);
-        
-        // Face recognition management
-        Route::post('face/register', [AttendanceController::class, 'registerFace']);
-        Route::delete('face/{id}', [AttendanceController::class, 'deleteFace']);
-        
-        // Device management
-        Route::resource('devices', DeviceController::class);
-        Route::post('devices/{device}/heartbeat', [DeviceController::class, 'heartbeat']);
-        Route::get('devices', [DeviceController::class, 'index']); // cek daftar device
-    });
-});
+// endpoint khusus
+Route::post('devices/{device}/heartbeat', [DeviceController::class, 'heartbeat']);
+Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus']);

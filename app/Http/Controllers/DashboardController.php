@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Log; // sesuaikan dengan nama model absensi/log kamu
 use App\Models\Attendance;
 use App\Models\Device;
 use Carbon\Carbon;
@@ -13,30 +12,43 @@ class DashboardController extends Controller
     {
         $today = Carbon::today();
 
-        // Hitung jumlah hadir
-        $todayPresent = Log::whereDate('tanggal', $today)
-            ->where('status', 'Hadir')
-            ->count();
+        // Total attendance hari ini (masuk + keluar)
+        $todayAttendance = Attendance::whereBetween('scanned_at', [
+            $today->copy()->startOfDay(),
+            $today->copy()->endOfDay()
+        ])->count();
 
-        // Hitung jumlah terlambat
-        $todayLate = Log::whereDate('tanggal', $today)
-            ->where('status', 'Terlambat')
-            ->count();
+        // Jumlah datang terlambat
+        $todayLate = Attendance::whereBetween('scanned_at', [
+            $today->copy()->startOfDay(),
+            $today->copy()->endOfDay()
+        ])->where('type', 'in')
+        ->where('status', 'late')
+        ->count();
 
-        // Hitung jumlah sudah pulang
-        $todayOut = Log::whereDate('tanggal', $today)
-            ->whereNotNull('jam_keluar')
-            ->count();
+        // Jumlah sudah pulang
+        $todayOut = Attendance::whereBetween('scanned_at', [
+            $today->copy()->startOfDay(),
+            $today->copy()->endOfDay()
+        ])->where('type', 'out')
+        ->whereIn('status', ['on_time', 'early_leave'])
+        ->count();
 
-        $totalAttendance = Attendance::whereNotNull('scanned_at')->count();
-
+        // Total keseluruhan attendance
+        $totalAttendance = Attendance::count();
         $totalDevice = Device::count();
 
-        // Ambil riwayat absensi terbaru (paginate biar bisa pakai $logs->links())
-        $logs = Log::with(['user','device'])
-            ->orderBy('tanggal', 'desc')
+        $logs = Attendance::with(['user','device'])
+            ->orderBy('scanned_at', 'desc')
             ->paginate(10);
 
-        return view('dashboard', compact('todayPresent', 'todayLate', 'todayOut', 'totalAttendance', 'totalDevice','logs'));
+        return view('dashboard', compact(
+            'todayAttendance',
+            'todayLate',
+            'todayOut',
+            'totalAttendance',
+            'totalDevice',
+            'logs'
+        ));
     }
 }
